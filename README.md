@@ -1,41 +1,66 @@
-# LOVE20 矿池 ID（基于 ERC721 标准）
+## Foundry
 
-基于 LOVE20 core 协议的第一个生态衍生协议，采用 ERC721 标准，目的在于创建并管理矿池 ID，并将矿池 ID 通过 NFT 的形式资产化，让后续基于矿池逻辑的扩展协议、衍生协议，能够方便地获取和使用一个全局统一的矿池 ID 系统。
+**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
 
-## PoolID 铸造
+Foundry consists of:
 
-任何人都可以支付一定数量的 LOVE20 代币，来铸造一个独一无二的 PoolID，并在任何支持此协议的矿池类扩展协议中，行使矿池主的权力
+-   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
+-   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
+-   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
+-   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
 
-铸造时需提供一个未铸造过的矿池名称
+## Documentation
 
-每次铸造需支付一定数量的 LOVE20 代币给到合约，计算公式如下：
+https://book.getfoundry.sh/
 
-铸造基础费用 = LOVE20 剩余未铸造量 / 10^8
+## Usage
 
-对于矿池名称字节数 >= 10 字节，只收取基础费用
-对于矿池名称字节数 < 10 字节的，每比 10 字节少 1 个字节，则所需代币数量 \* 10
+### Build
 
-例如，当 LOVE20 剩余未铸造量为 80 亿时，不同矿池名称字节数对应的铸造费用如下：
+```shell
+$ forge build
+```
 
-| 字节数 | 铸造需 LOVE20 个数 |
-| ------ | ------------------ |
-| 12     | 80                 |
-| 10     | 80                 |
-| 8      | 8000               |
-| 6      | 800,000            |
-| 4      | 80,000,000         |
+### Test
 
-参考：
+```shell
+$ forge test
+```
 
-- 英文字母、数字、常见符号：占用 1 个字节 (与 ASCII 兼容)。
-- 欧洲、中东等语言的大部分字符：占用 2 个字节。
-- 中文、日文、韩文等(CJK)字符：占用 3 个字节。
-- 一些非常罕见的字符、表情符号：可能占用 4 个字节。
+### Format
 
-## PoolID 转移
+```shell
+$ forge fmt
+```
 
-PoolID 可以转移，相关的扩展协议所产生的矿池主的权力与获取矿池主的激励，将转移到 PoolID 新的持有者
+### Gas Snapshots
 
-## PoolID 应用
+```shell
+$ forge snapshot
+```
 
-PoolID 可以视作每个矿池的身份证和钥匙，它是 LOVE20 矿池生态的唯一凭证，也代表了矿池的所有权，是 LOVE20 生态中一种全新的资产类型。
+### Anvil
+
+```shell
+$ anvil
+```
+
+### Deploy
+
+```shell
+$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
+```
+
+### Cast
+
+```shell
+$ cast <subcommand>
+```
+
+### Help
+
+```shell
+$ forge --help
+$ anvil --help
+$ cast --help
+```
