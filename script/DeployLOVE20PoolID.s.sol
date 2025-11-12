@@ -3,13 +3,13 @@ pragma solidity =0.8.17;
 
 import {Script} from "forge-std/Script.sol";
 import {console2} from "forge-std/console2.sol";
-import {PoolID} from "../src/PoolID.sol";
+import {LOVE20PoolID} from "../src/LOVE20PoolID.sol";
 
 /**
- * @title DeployPoolID
- * @notice Deployment script for the PoolID contract
+ * @title DeployLOVE20PoolID
+ * @notice Deployment script for the LOVE20PoolID contract
  */
-contract DeployPoolID is Script {
+contract DeployLOVE20PoolID is Script {
     function run() external {
         address love20TokenAddress = vm.envAddress("LOVE20_TOKEN_ADDRESS");
 
@@ -32,8 +32,8 @@ contract DeployPoolID is Script {
         // Use keystore account (configured via --account flag)
         vm.startBroadcast();
 
-        // Deploy PoolID contract with all parameters
-        PoolID poolID = new PoolID(
+        // Deploy LOVE20PoolID contract with all parameters
+        LOVE20PoolID poolID = new LOVE20PoolID(
             love20TokenAddress,
             baseDivisor,
             bytesThreshold,
@@ -41,7 +41,7 @@ contract DeployPoolID is Script {
             maxPoolNameLength
         );
 
-        console2.log("PoolID deployed at:", address(poolID));
+        console2.log("LOVE20PoolID deployed at:", address(poolID));
 
         vm.stopBroadcast();
 
@@ -63,7 +63,7 @@ contract DeployPoolID is Script {
         console2.log("Address saved to:", addressFile);
 
         console2.log("\n=== Deployment Summary ===");
-        console2.log("PoolID Address:", address(poolID));
+        console2.log("LOVE20PoolID Address:", address(poolID));
         console2.log("Network:", network);
         console2.log("\nConfiguration:");
         console2.log("  - LOVE20 Token:", love20TokenAddress);

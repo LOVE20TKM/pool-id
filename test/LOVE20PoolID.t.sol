@@ -3,20 +3,20 @@ pragma solidity =0.8.17;
 
 import {Test} from "forge-std/Test.sol";
 import {console2} from "forge-std/console2.sol";
-import {PoolID} from "../src/PoolID.sol";
+import {LOVE20PoolID} from "../src/LOVE20PoolID.sol";
 import {
-    IPoolID,
-    IPoolIDErrors,
-    IPoolIDEvents
-} from "../src/interfaces/IPoolID.sol";
+    ILOVE20PoolID,
+    ILOVE20PoolIDErrors,
+    ILOVE20PoolIDEvents
+} from "../src/interfaces/ILOVE20PoolID.sol";
 import {MockLOVE20Token} from "./mocks/MockLOVE20Token.sol";
 
 /**
- * @title PoolIDTest
- * @notice Test suite for the PoolID contract
+ * @title LOVE20PoolIDTest
+ * @notice Test suite for the LOVE20PoolID contract
  */
-contract PoolIDTest is Test {
-    PoolID public poolID;
+contract LOVE20PoolIDTest is Test {
+    LOVE20PoolID public poolID;
     MockLOVE20Token public love20Token;
 
     address public user1;
@@ -38,8 +38,8 @@ contract PoolIDTest is Test {
         // Deploy mock LOVE20 token
         love20Token = new MockLOVE20Token("LOVE20", "LOVE", MAX_SUPPLY);
 
-        // Deploy PoolID contract with parameters
-        poolID = new PoolID(
+        // Deploy LOVE20PoolID contract with parameters
+        poolID = new LOVE20PoolID(
             address(love20Token),
             BASE_DIVISOR,
             BYTES_THRESHOLD,
@@ -62,8 +62,8 @@ contract PoolIDTest is Test {
     }
 
     function testCannotInitializeWithZeroAddress() public {
-        vm.expectRevert(IPoolIDErrors.InvalidAddress.selector);
-        new PoolID(
+        vm.expectRevert(ILOVE20PoolIDErrors.InvalidAddress.selector);
+        new LOVE20PoolID(
             address(0),
             BASE_DIVISOR,
             BYTES_THRESHOLD,
@@ -182,7 +182,7 @@ contract PoolIDTest is Test {
 
     function testCannotMintWithEmptyName() public {
         vm.startPrank(user1);
-        vm.expectRevert(IPoolIDErrors.PoolNameEmpty.selector);
+        vm.expectRevert(ILOVE20PoolIDErrors.PoolNameEmpty.selector);
         poolID.mint("");
         vm.stopPrank();
     }
@@ -191,7 +191,7 @@ contract PoolIDTest is Test {
         string memory poolName = " LeadingSpace";
 
         vm.startPrank(user1);
-        vm.expectRevert(IPoolIDErrors.InvalidPoolName.selector);
+        vm.expectRevert(ILOVE20PoolIDErrors.InvalidPoolName.selector);
         poolID.mint(poolName);
         vm.stopPrank();
     }
@@ -200,7 +200,7 @@ contract PoolIDTest is Test {
         string memory poolName = "TrailingSpace ";
 
         vm.startPrank(user1);
-        vm.expectRevert(IPoolIDErrors.InvalidPoolName.selector);
+        vm.expectRevert(ILOVE20PoolIDErrors.InvalidPoolName.selector);
         poolID.mint(poolName);
         vm.stopPrank();
     }
@@ -210,7 +210,7 @@ contract PoolIDTest is Test {
         string memory poolNameWithNewline = "Pool\nName";
 
         vm.startPrank(user1);
-        vm.expectRevert(IPoolIDErrors.InvalidPoolName.selector);
+        vm.expectRevert(ILOVE20PoolIDErrors.InvalidPoolName.selector);
         poolID.mint(poolNameWithNewline);
         vm.stopPrank();
     }
@@ -220,7 +220,7 @@ contract PoolIDTest is Test {
         string memory poolNameWithTab = "Pool\tName";
 
         vm.startPrank(user1);
-        vm.expectRevert(IPoolIDErrors.InvalidPoolName.selector);
+        vm.expectRevert(ILOVE20PoolIDErrors.InvalidPoolName.selector);
         poolID.mint(poolNameWithTab);
         vm.stopPrank();
     }
@@ -231,7 +231,7 @@ contract PoolIDTest is Test {
             memory poolName = "ThisIsAVeryLongPoolNameThatExceedsSixtyFourCharactersInLengthAndShouldBeRejected";
 
         vm.startPrank(user1);
-        vm.expectRevert(IPoolIDErrors.InvalidPoolName.selector);
+        vm.expectRevert(ILOVE20PoolIDErrors.InvalidPoolName.selector);
         poolID.mint(poolName);
         vm.stopPrank();
     }
@@ -241,7 +241,7 @@ contract PoolIDTest is Test {
         string memory poolName = unicode"Pool\u200BName";
 
         vm.startPrank(user1);
-        vm.expectRevert(IPoolIDErrors.InvalidPoolName.selector);
+        vm.expectRevert(ILOVE20PoolIDErrors.InvalidPoolName.selector);
         poolID.mint(poolName);
         vm.stopPrank();
     }
@@ -251,7 +251,7 @@ contract PoolIDTest is Test {
         string memory poolName = unicode"Pool\u200CName";
 
         vm.startPrank(user1);
-        vm.expectRevert(IPoolIDErrors.InvalidPoolName.selector);
+        vm.expectRevert(ILOVE20PoolIDErrors.InvalidPoolName.selector);
         poolID.mint(poolName);
         vm.stopPrank();
     }
@@ -261,7 +261,7 @@ contract PoolIDTest is Test {
         string memory poolName = unicode"Pool\u200DName";
 
         vm.startPrank(user1);
-        vm.expectRevert(IPoolIDErrors.InvalidPoolName.selector);
+        vm.expectRevert(ILOVE20PoolIDErrors.InvalidPoolName.selector);
         poolID.mint(poolName);
         vm.stopPrank();
     }
@@ -271,7 +271,7 @@ contract PoolIDTest is Test {
         string memory poolName = unicode"Pool\u200EName";
 
         vm.startPrank(user1);
-        vm.expectRevert(IPoolIDErrors.InvalidPoolName.selector);
+        vm.expectRevert(ILOVE20PoolIDErrors.InvalidPoolName.selector);
         poolID.mint(poolName);
         vm.stopPrank();
     }
@@ -281,7 +281,7 @@ contract PoolIDTest is Test {
         string memory poolName = unicode"Pool\u200FName";
 
         vm.startPrank(user1);
-        vm.expectRevert(IPoolIDErrors.InvalidPoolName.selector);
+        vm.expectRevert(ILOVE20PoolIDErrors.InvalidPoolName.selector);
         poolID.mint(poolName);
         vm.stopPrank();
     }
@@ -291,7 +291,7 @@ contract PoolIDTest is Test {
         string memory poolName = unicode"Pool\u00ADName";
 
         vm.startPrank(user1);
-        vm.expectRevert(IPoolIDErrors.InvalidPoolName.selector);
+        vm.expectRevert(ILOVE20PoolIDErrors.InvalidPoolName.selector);
         poolID.mint(poolName);
         vm.stopPrank();
     }
@@ -301,7 +301,7 @@ contract PoolIDTest is Test {
         string memory poolName = unicode"\uFEFFPoolName";
 
         vm.startPrank(user1);
-        vm.expectRevert(IPoolIDErrors.InvalidPoolName.selector);
+        vm.expectRevert(ILOVE20PoolIDErrors.InvalidPoolName.selector);
         poolID.mint(poolName);
         vm.stopPrank();
     }
@@ -311,7 +311,7 @@ contract PoolIDTest is Test {
         string memory poolName = unicode"Pool\u2060Name";
 
         vm.startPrank(user1);
-        vm.expectRevert(IPoolIDErrors.InvalidPoolName.selector);
+        vm.expectRevert(ILOVE20PoolIDErrors.InvalidPoolName.selector);
         poolID.mint(poolName);
         vm.stopPrank();
     }
@@ -321,7 +321,7 @@ contract PoolIDTest is Test {
         string memory poolName = unicode"Pool\u034FName";
 
         vm.startPrank(user1);
-        vm.expectRevert(IPoolIDErrors.InvalidPoolName.selector);
+        vm.expectRevert(ILOVE20PoolIDErrors.InvalidPoolName.selector);
         poolID.mint(poolName);
         vm.stopPrank();
     }
@@ -339,7 +339,7 @@ contract PoolIDTest is Test {
         // Second mint with same name fails
         vm.startPrank(user2);
         love20Token.approve(address(poolID), mintCost);
-        vm.expectRevert(IPoolIDErrors.PoolNameAlreadyExists.selector);
+        vm.expectRevert(ILOVE20PoolIDErrors.PoolNameAlreadyExists.selector);
         poolID.mint(poolName);
         vm.stopPrank();
     }
@@ -419,7 +419,7 @@ contract PoolIDTest is Test {
         string memory poolName = "Pool Name";
 
         vm.startPrank(user1);
-        vm.expectRevert(IPoolIDErrors.InvalidPoolName.selector);
+        vm.expectRevert(ILOVE20PoolIDErrors.InvalidPoolName.selector);
         poolID.mint(poolName);
         vm.stopPrank();
     }

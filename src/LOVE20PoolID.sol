@@ -5,15 +5,15 @@ import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import {
     ERC721Enumerable
 } from "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
-import {IPoolID} from "./interfaces/IPoolID.sol";
+import {ILOVE20PoolID} from "./interfaces/ILOVE20PoolID.sol";
 import {ILOVE20Token} from "@core/interfaces/ILOVE20Token.sol";
 
 /**
- * @title PoolID
+ * @title LOVE20PoolID
  * @notice ERC721-based Pool ID system for LOVE20 ecosystem
  * @dev Each Pool ID represents ownership of a mining pool in the LOVE20 ecosystem
  */
-contract PoolID is ERC721Enumerable, IPoolID {
+contract LOVE20PoolID is ERC721Enumerable, ILOVE20PoolID {
     // ============ Immutable Parameters ============
 
     address public immutable love20Token;

@@ -303,7 +303,7 @@ cast_call $poolIdAddress "tokenByIndex(uint256)(uint256)" 0
 查看详细错误信息：
 ```bash
 # 在 forge_script 命令后添加 -vvvv 参数查看详细日志
-forge script script/DeployPoolID.s.sol:DeployPoolID --sig "run()" \
+forge script script/DeployLOVE20PoolID.s.sol:DeployLOVE20PoolID --sig "run()" \
   --rpc-url $RPC_URL \
   --account $KEYSTORE_ACCOUNT \
   --broadcast \

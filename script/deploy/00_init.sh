@@ -109,7 +109,7 @@ forge_script() {
 echo "forge_script() loaded"
 
 forge_script_deploy_pool_id() {
-  forge_script ../DeployPoolID.s.sol:DeployPoolID --sig "run()"
+  forge_script ../DeployLOVE20PoolID.s.sol:DeployLOVE20PoolID --sig "run()"
 }
 
 echo "forge_script_deploy_pool_id() loaded"

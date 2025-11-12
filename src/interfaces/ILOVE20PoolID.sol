@@ -8,7 +8,7 @@ import {
     IERC721Metadata
 } from "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol";
 
-interface IPoolIDEvents {
+interface ILOVE20PoolIDEvents {
     // Emitted when a new pool ID is minted
     event PoolIDMinted(
         uint256 indexed tokenId,
@@ -18,18 +18,18 @@ interface IPoolIDEvents {
     );
 }
 
-interface IPoolIDErrors {
+interface ILOVE20PoolIDErrors {
     error InvalidAddress();
     error PoolNameAlreadyExists();
     error PoolNameEmpty();
     error InvalidPoolName();
 }
 
-interface IPoolID is
+interface ILOVE20PoolID is
     IERC721Metadata,
     IERC721Enumerable,
-    IPoolIDEvents,
-    IPoolIDErrors
+    ILOVE20PoolIDEvents,
+    ILOVE20PoolIDErrors
 {
     // Mint a new pool ID with the given pool name
     function mint(string calldata poolName) external returns (uint256 tokenId);
