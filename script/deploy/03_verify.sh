@@ -50,5 +50,5 @@ constructor_args=$(cast abi-encode "constructor(address,uint256,uint256,uint256,
     $MULTIPLIER \
     $MAX_POOL_NAME_LENGTH)
 
-# Verify PoolID
-verify_contract $poolIdAddress "PoolID" "src/PoolID.sol" $constructor_args
+# Verify LOVE20PoolID
+verify_contract $poolIdAddress "LOVE20PoolID" "src/LOVE20PoolID.sol" $constructor_args
