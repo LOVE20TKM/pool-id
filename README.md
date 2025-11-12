@@ -157,55 +157,55 @@ source 99_check.sh
 
 ```bash
 # 设置变量（可选，方便后续使用）
-POOL_ID=0x...  # PoolID 合约地址
+poolIdAddress=0x...  # PoolID 合约地址
 RPC_URL=https://proxy1.thinkiumrpc.net
 
 # 查询合约基本信息
-cast call $POOL_ID "name()(string)" --rpc-url $RPC_URL
-cast call $POOL_ID "symbol()(string)" --rpc-url $RPC_URL
-cast call $POOL_ID "love20Token()(address)" --rpc-url $RPC_URL
-cast call $POOL_ID "totalSupply()(uint256)" --rpc-url $RPC_URL
+cast call $poolIdAddress "name()(string)" --rpc-url $RPC_URL
+cast call $poolIdAddress "symbol()(string)" --rpc-url $RPC_URL
+cast call $poolIdAddress "love20Token()(address)" --rpc-url $RPC_URL
+cast call $poolIdAddress "totalSupply()(uint256)" --rpc-url $RPC_URL
 
 # 查询特定 token 信息
-cast call $POOL_ID "ownerOf(uint256)(address)" 1 --rpc-url $RPC_URL
-cast call $POOL_ID "poolNameOf(uint256)(string)" 1 --rpc-url $RPC_URL
+cast call $poolIdAddress "ownerOf(uint256)(address)" 1 --rpc-url $RPC_URL
+cast call $poolIdAddress "poolNameOf(uint256)(string)" 1 --rpc-url $RPC_URL
 
 # 查询矿池名称是否已被使用
-cast call $POOL_ID "isPoolNameUsed(string)(bool)" "MyPool" --rpc-url $RPC_URL
+cast call $poolIdAddress "isPoolNameUsed(string)(bool)" "MyPool" --rpc-url $RPC_URL
 
 # 通过名称查询 token ID
-cast call $POOL_ID "tokenIdOf(string)(uint256)" "MyPool" --rpc-url $RPC_URL
+cast call $poolIdAddress "tokenIdOf(string)(uint256)" "MyPool" --rpc-url $RPC_URL
 
 # 计算铸造成本
-cast call $POOL_ID "calculateMintCost(string)(uint256)" "MyPool" --rpc-url $RPC_URL
+cast call $poolIdAddress "calculateMintCost(string)(uint256)" "MyPool" --rpc-url $RPC_URL
 ```
 
 ### 铸造 PoolID
 
 使用 `cast` 命令铸造 Pool ID：
 
-```bash
+````bash
 # 设置变量
-POOL_ID=0x...           # PoolID 合约地址
-LOVE20_TOKEN=0x...      # LOVE20 token 地址
+poolIdAddress=0x...           # PoolID 合约地址
+LOVE20_TOKEN_ADDRESS=0x...      # LOVE20 token 地址
 POOL_NAME="YourPool"    # 矿池名称
 RPC_URL=https://proxy1.thinkiumrpc.net
 
 # 1. 计算铸造成本
-MINT_COST=$(cast call $POOL_ID "calculateMintCost(string)(uint256)" "$POOL_NAME" --rpc-url $RPC_URL)
+MINT_COST=$(cast call $poolIdAddress "calculateMintCost(string)(uint256)" "$POOL_NAME" --rpc-url $RPC_URL)
 echo "Mint cost: $MINT_COST"
 
 # 2. 批准 LOVE20 代币（使用 keystore 账户）
-cast send $LOVE20_TOKEN \
+cast send $LOVE20_TOKEN_ADDRESS \
   "approve(address,uint256)" \
-  $POOL_ID $MINT_COST \
+  $poolIdAddress $MINT_COST \
   --rpc-url $RPC_URL \
   --account myaccount \
   --gas-price 5000000000 \
   --legacy
 
 # 3. 铸造 Pool ID
-cast send $POOL_ID \
+cast send $poolIdAddress \
   "mint(string)(uint256)" \
   "$POOL_NAME" \
   --rpc-url $RPC_URL \
@@ -213,16 +213,13 @@ cast send $POOL_ID \
   --gas-price 5000000000 \
   --legacy
 
-# 注意：不推荐使用 --private-key，建议使用 keystore 账户
-```
-
 ## 开发
 
 ### 运行测试
 
 ```bash
 forge test
-```
+````
 
 ### 编译合约
 
