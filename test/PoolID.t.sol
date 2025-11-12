@@ -25,6 +25,12 @@ contract PoolIDTest is Test {
     uint256 constant INITIAL_SUPPLY = 10_000_000_000 * 1e18; // 10 billion tokens
     uint256 constant MAX_SUPPLY = 21_000_000_000 * 1e18; // 21 billion tokens
 
+    // PoolID parameters (matching default config)
+    uint256 constant BASE_DIVISOR = 1e8;
+    uint256 constant BYTES_THRESHOLD = 10;
+    uint256 constant MULTIPLIER = 10;
+    uint256 constant MAX_POOL_NAME_LENGTH = 64;
+
     function setUp() public {
         user1 = makeAddr("user1");
         user2 = makeAddr("user2");
@@ -32,8 +38,14 @@ contract PoolIDTest is Test {
         // Deploy mock LOVE20 token
         love20Token = new MockLOVE20Token("LOVE20", "LOVE", MAX_SUPPLY);
 
-        // Deploy PoolID contract
-        poolID = new PoolID(address(love20Token));
+        // Deploy PoolID contract with parameters
+        poolID = new PoolID(
+            address(love20Token),
+            BASE_DIVISOR,
+            BYTES_THRESHOLD,
+            MULTIPLIER,
+            MAX_POOL_NAME_LENGTH
+        );
 
         // Mint some tokens to users
         love20Token.mint(user1, 1_000_000 * 1e18);
@@ -46,12 +58,18 @@ contract PoolIDTest is Test {
         assertEq(poolID.love20Token(), address(love20Token));
         assertEq(poolID.totalSupply(), 0);
         assertEq(poolID.name(), "LOVE20 Pool ID");
-        assertEq(poolID.symbol(), "LPID");
+        assertEq(poolID.symbol(), "PoolID");
     }
 
     function testCannotInitializeWithZeroAddress() public {
         vm.expectRevert(IPoolIDErrors.InvalidAddress.selector);
-        new PoolID(address(0));
+        new PoolID(
+            address(0),
+            BASE_DIVISOR,
+            BYTES_THRESHOLD,
+            MULTIPLIER,
+            MAX_POOL_NAME_LENGTH
+        );
     }
 
     // ============ Minting Cost Calculation Tests ============

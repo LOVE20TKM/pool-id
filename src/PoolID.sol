@@ -14,16 +14,15 @@ import {ILOVE20Token} from "@core/interfaces/ILOVE20Token.sol";
  * @dev Each Pool ID represents ownership of a mining pool in the LOVE20 ecosystem
  */
 contract PoolID is ERC721Enumerable, IPoolID {
-    // ============ Constants ============
-
-    uint256 private constant BASE_DIVISOR = 1e8;
-    uint256 private constant BYTES_THRESHOLD = 10;
-    uint256 private constant MULTIPLIER = 10;
-    uint256 private constant MAX_POOL_NAME_LENGTH = 64;
-
-    // ============ State Variables ============
+    // ============ Immutable Parameters ============
 
     address public immutable love20Token;
+    uint256 public immutable baseDivisor;
+    uint256 public immutable bytesThreshold;
+    uint256 public immutable multiplier;
+    uint256 public immutable maxPoolNameLength;
+
+    // ============ State Variables ============
 
     uint256 private _nextTokenId = 1;
 
@@ -35,9 +34,33 @@ contract PoolID is ERC721Enumerable, IPoolID {
 
     // ============ Constructor ============
 
-    constructor(address love20Token_) ERC721("LOVE20 Pool ID", "LPID") {
+    /**
+     * @param love20Token_ Address of the LOVE20 token
+     * @param baseDivisor_ Base divisor for cost calculation (e.g., 1e8)
+     * @param bytesThreshold_ Byte length threshold for cost multiplier (e.g., 10)
+     * @param multiplier_ Multiplier for short names (e.g., 10)
+     * @param maxPoolNameLength_ Maximum pool name length in bytes (e.g., 64)
+     */
+    constructor(
+        address love20Token_,
+        uint256 baseDivisor_,
+        uint256 bytesThreshold_,
+        uint256 multiplier_,
+        uint256 maxPoolNameLength_
+    ) ERC721("LOVE20 Pool ID", "PoolID") {
         if (love20Token_ == address(0)) revert InvalidAddress();
+        if (baseDivisor_ == 0) revert InvalidAddress();
+        if (bytesThreshold_ == 0) revert InvalidAddress();
+        if (multiplier_ < 2) revert InvalidAddress();
+        if (maxPoolNameLength_ == 0) {
+            revert InvalidAddress();
+        }
+
         love20Token = love20Token_;
+        baseDivisor = baseDivisor_;
+        bytesThreshold = bytesThreshold_;
+        multiplier = multiplier_;
+        maxPoolNameLength = maxPoolNameLength_;
     }
 
     // ============ Pool ID Functions ============
@@ -98,26 +121,26 @@ contract PoolID is ERC721Enumerable, IPoolID {
         // Get the unminted supply (maxSupply - totalSupply)
         uint256 unmintedSupply = token.maxSupply() - token.totalSupply();
 
-        // Base cost = unminted supply / 10^8
-        uint256 baseCost = unmintedSupply / BASE_DIVISOR;
+        // Base cost = unminted supply / baseDivisor
+        uint256 baseCost = unmintedSupply / baseDivisor;
 
         // Get byte length of pool name
         uint256 byteLength = bytes(poolName).length;
 
-        // If byte length >= 10, return base cost
-        if (byteLength >= BYTES_THRESHOLD) {
+        // If byte length >= bytesThreshold, return base cost
+        if (byteLength >= bytesThreshold) {
             return baseCost;
         }
 
-        // Otherwise, multiply by 10^(10 - byteLength)
-        uint256 multiplier = 1;
-        uint256 difference = BYTES_THRESHOLD - byteLength;
+        // Otherwise, multiply by multiplier^(bytesThreshold - byteLength)
+        uint256 costMultiplier = 1;
+        uint256 difference = bytesThreshold - byteLength;
 
         for (uint256 i = 0; i < difference; i++) {
-            multiplier *= MULTIPLIER;
+            costMultiplier *= multiplier;
         }
 
-        return baseCost * multiplier;
+        return baseCost * costMultiplier;
     }
 
     /**
@@ -172,12 +195,12 @@ contract PoolID is ERC721Enumerable, IPoolID {
      */
     function _isValidPoolName(
         string memory poolName
-    ) private pure returns (bool) {
+    ) private view returns (bool) {
         bytes memory nameBytes = bytes(poolName);
         uint256 len = nameBytes.length;
 
         // Check length bounds (byte length, not character count)
-        if (len == 0 || len > MAX_POOL_NAME_LENGTH) {
+        if (len == 0 || len > maxPoolNameLength) {
             return false;
         }
 

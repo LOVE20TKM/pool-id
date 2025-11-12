@@ -8,4 +8,9 @@ remappings = [
     "@openzeppelin/=lib/core/lib/openzeppelin-contracts/"
 ]
 
+# File system permissions for deployment scripts
+fs_permissions = [
+    { access = "read-write", path = "./script/network/" }
+]
+
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
