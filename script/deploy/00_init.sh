@@ -17,13 +17,13 @@ network_dir="../network/$network"
 source $network_dir/.account && \
 source $network_dir/network.params
 
-# Load PoolID configuration (includes LOVE20 token address and parameters)
-if [ -f "$network_dir/poolid.params" ]; then
-    source $network_dir/poolid.params
+# Load Group configuration (includes LOVE20 token address and parameters)
+if [ -f "$network_dir/group.params" ]; then
+    source $network_dir/group.params
     
     # Check if LOVE20_TOKEN_ADDRESS is set
     if [ -z "$LOVE20_TOKEN_ADDRESS" ]; then
-        echo -e "\033[31mError:\033[0m LOVE20_TOKEN_ADDRESS not set in poolid.params"
+        echo -e "\033[31mError:\033[0m LOVE20_TOKEN_ADDRESS not set in group.params"
         return 1
     fi
     
@@ -32,17 +32,17 @@ if [ -f "$network_dir/poolid.params" ]; then
     export BASE_DIVISOR
     export BYTES_THRESHOLD
     export MULTIPLIER
-    export MAX_POOL_NAME_LENGTH
+    export MAX_GROUP_NAME_LENGTH
     
-    echo "PoolID Configuration loaded:"
+    echo "Group Configuration loaded:"
     echo "  LOVE20 Token: $LOVE20_TOKEN_ADDRESS"
     echo "  BASE_DIVISOR: $BASE_DIVISOR"
     echo "  BYTES_THRESHOLD: $BYTES_THRESHOLD"
     echo "  MULTIPLIER: $MULTIPLIER"
-    echo "  MAX_POOL_NAME_LENGTH: $MAX_POOL_NAME_LENGTH"
+    echo "  MAX_GROUP_NAME_LENGTH: $MAX_GROUP_NAME_LENGTH"
 else
-    echo -e "\033[31mError:\033[0m poolid.params not found"
-    echo -e "Please create $network_dir/poolid.params"
+    echo -e "\033[31mError:\033[0m group.params not found"
+    echo -e "Please create $network_dir/group.params"
     return 1
 fi
 
@@ -108,8 +108,8 @@ forge_script() {
 }
 echo "forge_script() loaded"
 
-forge_script_deploy_pool_id() {
-  forge_script ../DeployLOVE20PoolID.s.sol:DeployLOVE20PoolID --sig "run()"
+forge_script_deploy_group() {
+  forge_script ../DeployLOVE20Group.s.sol:DeployLOVE20Group --sig "run()"
 }
 
-echo "forge_script_deploy_pool_id() loaded"
+echo "forge_script_deploy_group() loaded"

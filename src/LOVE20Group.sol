@@ -5,32 +5,32 @@ import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import {
     ERC721Enumerable
 } from "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
-import {ILOVE20PoolID} from "./interfaces/ILOVE20PoolID.sol";
+import {ILOVE20Group} from "./interfaces/ILOVE20Group.sol";
 import {ILOVE20Token} from "@core/interfaces/ILOVE20Token.sol";
 
 /**
- * @title LOVE20PoolID
- * @notice ERC721-based Pool ID system for LOVE20 ecosystem
- * @dev Each Pool ID represents ownership of a mining pool in the LOVE20 ecosystem
+ * @title LOVE20Group
+ * @notice ERC721-based Group system for LOVE20 ecosystem
+ * @dev Each Group represents ownership of a group in the LOVE20 ecosystem
  */
-contract LOVE20PoolID is ERC721Enumerable, ILOVE20PoolID {
+contract LOVE20Group is ERC721Enumerable, ILOVE20Group {
     // ============ Immutable Parameters ============
 
     address public immutable love20Token;
     uint256 public immutable baseDivisor;
     uint256 public immutable bytesThreshold;
     uint256 public immutable multiplier;
-    uint256 public immutable maxPoolNameLength;
+    uint256 public immutable maxGroupNameLength;
 
     // ============ State Variables ============
 
     uint256 private _nextTokenId = 1;
 
-    // Mapping from token ID to pool name
-    mapping(uint256 => string) private _poolNames;
+    // Mapping from token ID to group name
+    mapping(uint256 => string) private _groupNames;
 
-    // Mapping from pool name to token ID (0 if not exists)
-    mapping(string => uint256) private _poolNameToTokenId;
+    // Mapping from group name to token ID (0 if not exists)
+    mapping(string => uint256) private _groupNameToTokenId;
 
     // ============ Constructor ============
 
@@ -39,20 +39,20 @@ contract LOVE20PoolID is ERC721Enumerable, ILOVE20PoolID {
      * @param baseDivisor_ Base divisor for cost calculation (e.g., 1e8)
      * @param bytesThreshold_ Byte length threshold for cost multiplier (e.g., 10)
      * @param multiplier_ Multiplier for short names (e.g., 10)
-     * @param maxPoolNameLength_ Maximum pool name length in bytes (e.g., 64)
+     * @param maxGroupNameLength_ Maximum group name length in bytes (e.g., 64)
      */
     constructor(
         address love20Token_,
         uint256 baseDivisor_,
         uint256 bytesThreshold_,
         uint256 multiplier_,
-        uint256 maxPoolNameLength_
-    ) ERC721("LOVE20 Pool ID", "PoolID") {
+        uint256 maxGroupNameLength_
+    ) ERC721("LOVE20 Group", "Group") {
         if (love20Token_ == address(0)) revert InvalidAddress();
         if (baseDivisor_ == 0) revert InvalidAddress();
         if (bytesThreshold_ == 0) revert InvalidAddress();
         if (multiplier_ < 2) revert InvalidAddress();
-        if (maxPoolNameLength_ == 0) {
+        if (maxGroupNameLength_ == 0) {
             revert InvalidAddress();
         }
 
@@ -60,38 +60,41 @@ contract LOVE20PoolID is ERC721Enumerable, ILOVE20PoolID {
         baseDivisor = baseDivisor_;
         bytesThreshold = bytesThreshold_;
         multiplier = multiplier_;
-        maxPoolNameLength = maxPoolNameLength_;
+        maxGroupNameLength = maxGroupNameLength_;
     }
 
-    // ============ Pool ID Functions ============
+    // ============ Group Functions ============
 
     /**
-     * @notice Mint a new pool ID with the given pool name
+     * @notice Mint a new group with the given group name
      * @dev Requires payment in LOVE20 tokens based on name length
-     * @param poolName The unique name for the pool
+     * @param groupName The unique name for the group
      * @return tokenId The newly minted token ID
      */
-    function mint(string calldata poolName) external returns (uint256 tokenId) {
+    function mint(
+        string calldata groupName
+    ) external returns (uint256 tokenId) {
         // ========== Checks ==========
-        uint256 mintCost = calculateMintCost(poolName);
+        uint256 mintCost = calculateMintCost(groupName);
         // ========== Effects ==========
-        _mint(msg.sender, poolName, mintCost);
+        _mint(msg.sender, groupName, mintCost);
         return _nextTokenId - 1;
     }
 
     function _mint(
         address to,
-        string memory poolName,
+        string memory groupName,
         uint256 mintCost
     ) internal {
-        if (bytes(poolName).length == 0) revert PoolNameEmpty();
-        if (!_isValidPoolName(poolName)) revert InvalidPoolName();
-        if (_poolNameToTokenId[poolName] != 0) revert PoolNameAlreadyExists();
+        if (bytes(groupName).length == 0) revert GroupNameEmpty();
+        if (!_isValidGroupName(groupName)) revert InvalidGroupName();
+        if (_groupNameToTokenId[groupName] != 0)
+            revert GroupNameAlreadyExists();
 
         uint256 tokenId = _nextTokenId++;
         _mint(to, tokenId);
-        _poolNames[tokenId] = poolName;
-        _poolNameToTokenId[poolName] = tokenId;
+        _groupNames[tokenId] = groupName;
+        _groupNameToTokenId[groupName] = tokenId;
 
         if (mintCost > 0) {
             ILOVE20Token(love20Token).transferFrom(
@@ -101,20 +104,20 @@ contract LOVE20PoolID is ERC721Enumerable, ILOVE20PoolID {
             );
         }
 
-        emit PoolIDMinted(tokenId, msg.sender, poolName, mintCost);
+        emit GroupMinted(tokenId, msg.sender, groupName, mintCost);
     }
 
     /**
-     * @notice Calculate the cost to mint a pool ID with the given pool name
+     * @notice Calculate the cost to mint a group with the given group name
      * @dev Cost formula:
      *      Base cost = remaining unminted LOVE20 / 10^8
      *      For names with >= 10 bytes: cost = base cost
      *      For names with < 10 bytes: cost = base cost * (10 ^ (10 - byte_length))
-     * @param poolName The pool name to calculate cost for
+     * @param groupName The group name to calculate cost for
      * @return The cost in LOVE20 tokens
      */
     function calculateMintCost(
-        string calldata poolName
+        string calldata groupName
     ) public view returns (uint256) {
         ILOVE20Token token = ILOVE20Token(love20Token);
 
@@ -124,8 +127,8 @@ contract LOVE20PoolID is ERC721Enumerable, ILOVE20PoolID {
         // Base cost = unminted supply / baseDivisor
         uint256 baseCost = unmintedSupply / baseDivisor;
 
-        // Get byte length of pool name
-        uint256 byteLength = bytes(poolName).length;
+        // Get byte length of group name
+        uint256 byteLength = bytes(groupName).length;
 
         // If byte length >= bytesThreshold, return base cost
         if (byteLength >= bytesThreshold) {
@@ -144,43 +147,45 @@ contract LOVE20PoolID is ERC721Enumerable, ILOVE20PoolID {
     }
 
     /**
-     * @notice Get the pool name for a token ID
+     * @notice Get the group name for a token ID
      * @param tokenId The token ID to query
-     * @return The pool name associated with the token ID
+     * @return The group name associated with the token ID
      */
-    function poolNameOf(uint256 tokenId) external view returns (string memory) {
+    function groupNameOf(
+        uint256 tokenId
+    ) external view returns (string memory) {
         _requireMinted(tokenId);
-        return _poolNames[tokenId];
+        return _groupNames[tokenId];
     }
 
     /**
-     * @notice Check if a pool name is already used
-     * @param poolName The pool name to check
-     * @return True if the pool name is already used
+     * @notice Check if a group name is already used
+     * @param groupName The group name to check
+     * @return True if the group name is already used
      */
-    function isPoolNameUsed(
-        string calldata poolName
+    function isGroupNameUsed(
+        string calldata groupName
     ) external view returns (bool) {
-        return _poolNameToTokenId[poolName] != 0;
+        return _groupNameToTokenId[groupName] != 0;
     }
 
     /**
-     * @notice Get token ID by pool name
-     * @param poolName The pool name to query
-     * @return The token ID associated with the pool name (0 if not exists)
+     * @notice Get token ID by group name
+     * @param groupName The group name to query
+     * @return The token ID associated with the group name (0 if not exists)
      */
     function tokenIdOf(
-        string calldata poolName
+        string calldata groupName
     ) external view returns (uint256) {
-        return _poolNameToTokenId[poolName];
+        return _groupNameToTokenId[groupName];
     }
 
     // ============ Internal Functions ============
 
     /**
-     * @dev Validate pool name characters and format
-     * @param poolName The pool name to validate
-     * @return bool True if the pool name is valid
+     * @dev Validate group name characters and format
+     * @param groupName The group name to validate
+     * @return bool True if the group name is valid
      *
      * Validation rules:
      * - Length must be between 1 and 64 bytes (UTF-8 encoded)
@@ -193,14 +198,14 @@ contract LOVE20PoolID is ERC721Enumerable, ILOVE20PoolID {
      * Note: We check byte length, not character count. A single Unicode
      * character may use multiple bytes in UTF-8 encoding.
      */
-    function _isValidPoolName(
-        string memory poolName
+    function _isValidGroupName(
+        string memory groupName
     ) private view returns (bool) {
-        bytes memory nameBytes = bytes(poolName);
+        bytes memory nameBytes = bytes(groupName);
         uint256 len = nameBytes.length;
 
         // Check length bounds (byte length, not character count)
-        if (len == 0 || len > maxPoolNameLength) {
+        if (len == 0 || len > maxGroupNameLength) {
             return false;
         }
 

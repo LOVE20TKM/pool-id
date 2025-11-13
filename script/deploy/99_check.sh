@@ -1,60 +1,60 @@
 #!/bin/bash
 
 echo "========================================="
-echo "Verifying PoolID Configuration"
+echo "Verifying Group Configuration"
 echo "========================================="
 
 # Ensure environment is initialized
-if [ -z "$poolIdAddress" ]; then
-    echo -e "\033[31mError:\033[0m PoolID address not set"
+if [ -z "$groupAddress" ]; then
+    echo -e "\033[31mError:\033[0m Group address not set"
     return 1
 fi
 
-echo -e "\nPoolID Address: $poolIdAddress\n"
+echo -e "\nGroup Address: $groupAddress\n"
 
 # Track failures
 failed_checks=0
 
 # Check love20Token address
-check_equal "PoolID: love20Token" $LOVE20_TOKEN_ADDRESS $(cast_call $poolIdAddress "love20Token()(address)")
+check_equal "Group: love20Token" $LOVE20_TOKEN_ADDRESS $(cast_call $groupAddress "love20Token()(address)")
 [ $? -ne 0 ] && ((failed_checks++))
 echo ""
 
 # Check baseDivisor
-check_equal "PoolID: baseDivisor" $BASE_DIVISOR $(cast_call $poolIdAddress "baseDivisor()(uint256)")
+check_equal "Group: baseDivisor" $BASE_DIVISOR $(cast_call $groupAddress "baseDivisor()(uint256)")
 [ $? -ne 0 ] && ((failed_checks++))
 echo ""
 
 # Check bytesThreshold
-check_equal "PoolID: bytesThreshold" $BYTES_THRESHOLD $(cast_call $poolIdAddress "bytesThreshold()(uint256)")
+check_equal "Group: bytesThreshold" $BYTES_THRESHOLD $(cast_call $groupAddress "bytesThreshold()(uint256)")
 [ $? -ne 0 ] && ((failed_checks++))
 echo ""
 
 # Check multiplier
-check_equal "PoolID: multiplier" $MULTIPLIER $(cast_call $poolIdAddress "multiplier()(uint256)")
+check_equal "Group: multiplier" $MULTIPLIER $(cast_call $groupAddress "multiplier()(uint256)")
 [ $? -ne 0 ] && ((failed_checks++))
 echo ""
 
-# Check maxPoolNameLength
-check_equal "PoolID: maxPoolNameLength" $MAX_POOL_NAME_LENGTH $(cast_call $poolIdAddress "maxPoolNameLength()(uint256)")
+# Check maxGroupNameLength
+check_equal "Group: maxGroupNameLength" $MAX_GROUP_NAME_LENGTH $(cast_call $groupAddress "maxGroupNameLength()(uint256)")
 [ $? -ne 0 ] && ((failed_checks++))
 echo ""
 
 # Check name
-actual_name=$(cast_call $poolIdAddress "name()(string)")
-echo -e "\033[32m✓\033[0m PoolID: name"
+actual_name=$(cast_call $groupAddress "name()(string)")
+echo -e "\033[32m✓\033[0m Group: name"
 echo -e "  Actual: $actual_name"
 echo ""
 
 # Check symbol
-actual_symbol=$(cast_call $poolIdAddress "symbol()(string)")
-echo -e "\033[32m✓\033[0m PoolID: symbol"
+actual_symbol=$(cast_call $groupAddress "symbol()(string)")
+echo -e "\033[32m✓\033[0m Group: symbol"
 echo -e "  Actual: $actual_symbol"
 echo ""
 
 # Check totalSupply
-actual_supply=$(cast_call $poolIdAddress "totalSupply()(uint256)")
-echo -e "\033[32m✓\033[0m PoolID: totalSupply"
+actual_supply=$(cast_call $groupAddress "totalSupply()(uint256)")
+echo -e "\033[32m✓\033[0m Group: totalSupply"
 echo -e "  Actual: $actual_supply"
 echo ""
 

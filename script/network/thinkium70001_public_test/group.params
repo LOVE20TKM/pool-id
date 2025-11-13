@@ -1,10 +1,10 @@
-# PoolID Contract Configuration
+# GroupID Contract Configuration
 
 # LOVE20 Token Address (required)
-# This is the token used for minting Pool IDs
-LOVE20_TOKEN_ADDRESS=0x75537828f2ce51be7289709686A69CbFDbB714F1
+# This is the token used for minting Group IDs
+LOVE20_TOKEN_ADDRESS=0xaCE196081461beFCCDfB392A0B535A750078b2Aa
 
-# ===== PoolID Contract Parameters =====
+# ===== GroupID Contract Parameters =====
 
 # Base divisor for mint cost calculation
 # Cost = (unminted LOVE20) / BASE_DIVISOR
@@ -18,6 +18,7 @@ BYTES_THRESHOLD=10
 # Each byte less than threshold multiplies cost by this value
 MULTIPLIER=10
 
-# Maximum pool name length in bytes
-MAX_POOL_NAME_LENGTH=64
+# Maximum group name length in bytes
+MAX_GROUP_NAME_LENGTH=64
+
 

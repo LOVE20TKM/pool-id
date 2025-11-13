@@ -3,22 +3,22 @@ pragma solidity =0.8.17;
 
 import {Script} from "forge-std/Script.sol";
 import {console2} from "forge-std/console2.sol";
-import {LOVE20PoolID} from "../src/LOVE20PoolID.sol";
+import {LOVE20Group} from "../src/LOVE20Group.sol";
 
 /**
- * @title DeployLOVE20PoolID
- * @notice Deployment script for the LOVE20PoolID contract
+ * @title DeployLOVE20Group
+ * @notice Deployment script for the LOVE20Group contract
  */
-contract DeployLOVE20PoolID is Script {
+contract DeployLOVE20Group is Script {
     function run() external {
         address love20TokenAddress = vm.envAddress("LOVE20_TOKEN_ADDRESS");
 
-        // Load PoolID parameters from environment (with defaults)
+        // Load Group parameters from environment (with defaults)
         uint256 baseDivisor = vm.envOr("BASE_DIVISOR", uint256(100000000));
         uint256 bytesThreshold = vm.envOr("BYTES_THRESHOLD", uint256(10));
         uint256 multiplier = vm.envOr("MULTIPLIER", uint256(10));
-        uint256 maxPoolNameLength = vm.envOr(
-            "MAX_POOL_NAME_LENGTH",
+        uint256 maxGroupNameLength = vm.envOr(
+            "MAX_GROUP_NAME_LENGTH",
             uint256(64)
         );
 
@@ -27,21 +27,21 @@ contract DeployLOVE20PoolID is Script {
         console2.log("Base Divisor:", baseDivisor);
         console2.log("Bytes Threshold:", bytesThreshold);
         console2.log("Multiplier:", multiplier);
-        console2.log("Max Pool Name Length:", maxPoolNameLength);
+        console2.log("Max Group Name Length:", maxGroupNameLength);
 
         // Use keystore account (configured via --account flag)
         vm.startBroadcast();
 
-        // Deploy LOVE20PoolID contract with all parameters
-        LOVE20PoolID poolID = new LOVE20PoolID(
+        // Deploy LOVE20Group contract with all parameters
+        LOVE20Group group = new LOVE20Group(
             love20TokenAddress,
             baseDivisor,
             bytesThreshold,
             multiplier,
-            maxPoolNameLength
+            maxGroupNameLength
         );
 
-        console2.log("LOVE20PoolID deployed at:", address(poolID));
+        console2.log("LOVE20Group deployed at:", address(group));
 
         vm.stopBroadcast();
 
@@ -50,12 +50,12 @@ contract DeployLOVE20PoolID is Script {
         string memory addressFile = string.concat(
             "script/network/",
             network,
-            "/address.poolid.params"
+            "/address.group.params"
         );
 
         string memory content = string.concat(
-            "poolIdAddress=",
-            vm.toString(address(poolID)),
+            "groupAddress=",
+            vm.toString(address(group)),
             "\n"
         );
 
@@ -63,13 +63,13 @@ contract DeployLOVE20PoolID is Script {
         console2.log("Address saved to:", addressFile);
 
         console2.log("\n=== Deployment Summary ===");
-        console2.log("LOVE20PoolID Address:", address(poolID));
+        console2.log("LOVE20Group Address:", address(group));
         console2.log("Network:", network);
         console2.log("\nConfiguration:");
         console2.log("  - LOVE20 Token:", love20TokenAddress);
         console2.log("  - Base Divisor:", baseDivisor);
         console2.log("  - Bytes Threshold:", bytesThreshold);
         console2.log("  - Multiplier:", multiplier);
-        console2.log("  - Max Name Length:", maxPoolNameLength);
+        console2.log("  - Max Name Length:", maxGroupNameLength);
     }
 }

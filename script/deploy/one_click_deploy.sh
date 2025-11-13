@@ -12,7 +12,7 @@ if [ -z "$network" ] || [ ! -d "../network/$network" ]; then
 fi
 
 echo -e "\n========================================="
-echo -e "  One-Click Deploy PoolID"
+echo -e "  One-Click Deploy LOVE20 Group"
 echo -e "  Network: $network"
 echo -e "=========================================\n"
 
@@ -24,21 +24,21 @@ if [ $? -ne 0 ]; then
     return 1
 fi
 
-# ------ Step 2: Deploy PoolID ------
-echo -e "\n[Step 2/4] Deploying PoolID..."
-forge_script_deploy_pool_id
+# ------ Step 2: Deploy Group ------
+echo -e "\n[Step 2/4] Deploying Group..."
+forge_script_deploy_group
 if [ $? -ne 0 ]; then
     echo -e "\033[31mError:\033[0m Deployment failed"
     return 1
 fi
 
 # Load deployed address
-source $network_dir/address.poolid.params
-if [ -z "$poolIdAddress" ]; then
-    echo -e "\033[31mError:\033[0m PoolID address not found"
+source $network_dir/address.group.params
+if [ -z "$groupAddress" ]; then
+    echo -e "\033[31mError:\033[0m Group address not found"
     return 1
 fi
-echo -e "\033[32m✓\033[0m PoolID deployed at: $poolIdAddress"
+echo -e "\033[32m✓\033[0m Group deployed at: $groupAddress"
 
 # ------ Step 3: Verify contract (for thinkium70001 networks) ------
 if [[ "$network" == thinkium70001* ]]; then
@@ -64,7 +64,7 @@ fi
 echo -e "\n========================================="
 echo -e "\033[32m✓ Deployment completed successfully!\033[0m"
 echo -e "========================================="
-echo -e "PoolID Address: $poolIdAddress"
+echo -e "Group Address: $groupAddress"
 echo -e "LOVE20 Token Address: $LOVE20_TOKEN_ADDRESS"
 echo -e "Network: $network"
 echo -e "=========================================\n"

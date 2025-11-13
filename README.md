@@ -1,34 +1,34 @@
-# LOVE20 矿池 ID（基于 ERC721 标准）
+# LOVE20 群（基于 ERC721 标准）
 
 基于 LOVE20 core 协议的生态衍生协议
 
-## PoolID 特性
+## 特性
 
 ### 核心功能
 
-- 唯一性保证：每个矿池名称全局唯一，不可重复铸造
+- 唯一性保证：每个群名称全局唯一，不可重复铸造
 - NFT 资产化：基于 ERC721 标准，支持自由转让和交易
 - 动态定价：铸造成本随 LOVE20 供应量动态调整
 - 名称激励：短名称需要更高成本，鼓励有意义的长名称
-- 完整枚举：支持 ERC721Enumerable 扩展，可遍历所有 PoolID
+- 完整枚举：支持 ERC721Enumerable 扩展，可遍历所有群
 - 灵活配置：关键参数可在部署时配置，适应不同场景需求
 
-## PoolID 应用场景
+## 应用场景
 
-- 矿池所有权管理：PoolID 代表矿池的唯一身份和所有权凭证
-- 权益转让：通过 NFT 转让实现矿池经营权、收益权的流转
-- 生态集成：为 LOVE20 生态中的矿池类协议提供统一的身份系统
-- 价值发现：稀缺和有意义的 PoolID 名称可能具有市场价值
+- 群所有权管理：代表群的唯一身份和所有权凭证
+- 权益转让：通过 NFT 转让实现群经营权、收益权的流转
+- 生态集成：为 LOVE20 生态中的群类协议提供统一的身份系统
+- 价值发现：稀缺和有意义的群名称可能具有市场价值
 
-## PoolID 铸造
+## 铸造
 
-任何人都可以支付一定数量的 LOVE20 代币，来铸造一个独一无二的 PoolID，并在任何支持此协议的矿池类扩展协议中，行使矿池主的权力
+任何人都可以支付一定数量的 LOVE20 代币，来铸造一个独一无二的群，并在任何支持此协议的群类扩展协议中，行使群主的权力
 
-铸造时需提供一个未铸造过的矿池名称
+铸造时需提供一个未铸造过的群名称
 
-### 矿池名称规则
+### 群名称规则
 
-矿池名称需遵循以下验证规则：
+群名称需遵循以下验证规则：
 
 - ✅ 长度限制：1-64 字节（UTF-8 编码）
 - ✅ 支持字符：字母、数字、特殊符号、空格（仅内部）、中文等 Unicode 字符
@@ -40,7 +40,7 @@
 
 安全特性：系统实现了完整的字符验证，有效防止控制字符注入、零宽字符混淆、视觉欺骗等攻击。
 
-详细规则请参考 [矿池名称校验规则](./docs/矿池名称校验规则.md)
+详细规则请参考 [群名称校验规则](./docs/群名称校验规则.md)
 
 ### 铸造费用
 
@@ -48,10 +48,10 @@
 
 铸造基础费用 = LOVE20 剩余未铸造量 / 10^8
 
-对于矿池名称字节数 >= 10 字节，只收取基础费用
-对于矿池名称字节数 < 10 字节的，每比 10 字节少 1 个字节，则所需代币数量 \* 10
+对于群名称字节数 >= 10 字节，只收取基础费用
+对于群名称字节数 < 10 字节的，每比 10 字节少 1 个字节，则所需代币数量 \* 10
 
-例如，当 LOVE20 剩余未铸造量为 80 亿时，不同矿池名称字节数对应的铸造费用如下：
+例如，当 LOVE20 剩余未铸造量为 80 亿时，不同群名称字节数对应的铸造费用如下：
 
 | 字节数 | 铸造需 LOVE20 个数 |
 | ------ | ------------------ |
@@ -83,12 +83,12 @@
 
 - `.account` - 账户配置（keystore 账户名和地址）
 - `network.params` - 网络参数（RPC URL、链 ID、区块浏览器配置等）
-- `poolid.params` - PoolID 完整配置（LOVE20 地址、合约参数）
-- `address.poolid.params` - PoolID 合约地址（部署后自动生成）
+- `group.params` - Group 完整配置（LOVE20 地址、合约参数）
+- `address.group.params` - Group 合约地址（部署后自动生成）
 
-#### PoolID 配置说明
+#### Group 配置说明
 
-`poolid.params` 是唯一需要的配置文件，包含所有部署参数：
+`group.params` 是唯一需要的配置文件，包含所有部署参数：
 
 ```bash
 # LOVE20 Token 地址（必需）
@@ -98,7 +98,7 @@ LOVE20_TOKEN_ADDRESS=0x...
 BASE_DIVISOR=100000000        # 基础除数（1e8），用于计算铸造成本
 BYTES_THRESHOLD=10            # 字节阈值，名称 >= 此长度只需基础费用
 MULTIPLIER=10                 # 倍数，每少于阈值 1 字节，成本乘以此值
-MAX_POOL_NAME_LENGTH=64       # 矿池名称最大长度（字节）
+MAX_GROUP_NAME_LENGTH=64      # 群名称最大长度（字节）
 ```
 
 **注意**：所有参数在合约部署时设置，部署后永久不可更改。
@@ -127,7 +127,7 @@ source one_click_deploy.sh thinkium70001_public_test
 部署脚本会自动完成以下步骤：
 
 1. **初始化环境** - 加载网络配置和账户信息
-2. **部署合约** - 部署 PoolID 合约并保存地址
+2. **部署合约** - 部署 Group 合约并保存地址
 3. **验证合约** - 在区块浏览器上验证合约源码（仅 Thinkium 网络）
 4. **检查配置** - 验证合约部署正确性
 
@@ -141,8 +141,8 @@ cd script/deploy
 # 1. 初始化环境
 source 00_init.sh <网络名称>
 
-# 2. 部署 PoolID 合约
-forge_script_deploy_pool_id
+# 2. 部署 Group 合约
+forge_script_deploy_group
 
 # 3. 验证合约（仅 Thinkium 网络）
 source 03_verify.sh
@@ -151,63 +151,63 @@ source 03_verify.sh
 source 99_check.sh
 ```
 
-### 查询 PoolID 信息
+### 查询信息
 
 使用 `cast` 命令查询合约信息：
 
 ```bash
 # 设置变量（可选，方便后续使用）
-poolIdAddress=0x...  # PoolID 合约地址
+groupAddress=0x...  # Group 合约地址
 RPC_URL=https://proxy1.thinkiumrpc.net
 
 # 查询合约基本信息
-cast call $poolIdAddress "name()(string)" --rpc-url $RPC_URL
-cast call $poolIdAddress "symbol()(string)" --rpc-url $RPC_URL
-cast call $poolIdAddress "love20Token()(address)" --rpc-url $RPC_URL
-cast call $poolIdAddress "totalSupply()(uint256)" --rpc-url $RPC_URL
+cast call $groupAddress "name()(string)" --rpc-url $RPC_URL
+cast call $groupAddress "symbol()(string)" --rpc-url $RPC_URL
+cast call $groupAddress "love20Token()(address)" --rpc-url $RPC_URL
+cast call $groupAddress "totalSupply()(uint256)" --rpc-url $RPC_URL
 
 # 查询特定 token 信息
-cast call $poolIdAddress "ownerOf(uint256)(address)" 1 --rpc-url $RPC_URL
-cast call $poolIdAddress "poolNameOf(uint256)(string)" 1 --rpc-url $RPC_URL
+cast call $groupAddress "ownerOf(uint256)(address)" 1 --rpc-url $RPC_URL
+cast call $groupAddress "groupNameOf(uint256)(string)" 1 --rpc-url $RPC_URL
 
-# 查询矿池名称是否已被使用
-cast call $poolIdAddress "isPoolNameUsed(string)(bool)" "MyPool" --rpc-url $RPC_URL
+# 查询群名称是否已被使用
+cast call $groupAddress "isGroupNameUsed(string)(bool)" "MyGroup" --rpc-url $RPC_URL
 
 # 通过名称查询 token ID
-cast call $poolIdAddress "tokenIdOf(string)(uint256)" "MyPool" --rpc-url $RPC_URL
+cast call $groupAddress "tokenIdOf(string)(uint256)" "MyGroup" --rpc-url $RPC_URL
 
 # 计算铸造成本
-cast call $poolIdAddress "calculateMintCost(string)(uint256)" "MyPool" --rpc-url $RPC_URL
+cast call $groupAddress "calculateMintCost(string)(uint256)" "MyGroup" --rpc-url $RPC_URL
 ```
 
-### 铸造 PoolID
+### 铸造
 
-使用 `cast` 命令铸造 Pool ID：
+使用 `cast` 命令铸造群：
 
 ````bash
 # 设置变量
-poolIdAddress=0x...           # PoolID 合约地址
-LOVE20_TOKEN_ADDRESS=0x...      # LOVE20 token 地址
-POOL_NAME="YourPool"    # 矿池名称
+groupAddress=0x...             # Group 合约地址
+LOVE20_TOKEN_ADDRESS=0x...     # LOVE20 token 地址
+GROUP_NAME="YourGroup"         # 群名称
 RPC_URL=https://proxy1.thinkiumrpc.net
 
 # 1. 计算铸造成本
-MINT_COST=$(cast call $poolIdAddress "calculateMintCost(string)(uint256)" "$POOL_NAME" --rpc-url $RPC_URL)
+MINT_COST=$(cast call $groupAddress "calculateMintCost(string)(uint256)" "$GROUP_NAME" --rpc-url $RPC_URL)
 echo "Mint cost: $MINT_COST"
 
 # 2. 批准 LOVE20 代币（使用 keystore 账户）
 cast send $LOVE20_TOKEN_ADDRESS \
   "approve(address,uint256)" \
-  $poolIdAddress $MINT_COST \
+  $groupAddress $MINT_COST \
   --rpc-url $RPC_URL \
   --account myaccount \
   --gas-price 5000000000 \
   --legacy
 
-# 3. 铸造 Pool ID
-cast send $poolIdAddress \
+# 3. 铸造群
+cast send $groupAddress \
   "mint(string)(uint256)" \
-  "$POOL_NAME" \
+  "$GROUP_NAME" \
   --rpc-url $RPC_URL \
   --account myaccount \
   --gas-price 5000000000 \

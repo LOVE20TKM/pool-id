@@ -10,9 +10,9 @@ if [ -z "$RPC_URL" ]; then
     source 00_init.sh $network
 fi
 
-# Ensure PoolID address is loaded
-if [ -z "$poolIdAddress" ]; then
-    source $network_dir/address.poolid.params
+# Ensure Group address is loaded
+if [ -z "$groupAddress" ]; then
+    source $network_dir/address.group.params
 fi
 
 verify_contract(){
@@ -42,13 +42,13 @@ verify_contract(){
 }
 echo "verify_contract() loaded"
 
-# Encode constructor arguments: address love20Token, uint256 baseDivisor, uint256 bytesThreshold, uint256 multiplier, uint256 maxPoolNameLength
+# Encode constructor arguments: address love20Token, uint256 baseDivisor, uint256 bytesThreshold, uint256 multiplier, uint256 maxGroupNameLength
 constructor_args=$(cast abi-encode "constructor(address,uint256,uint256,uint256,uint256)" \
     $LOVE20_TOKEN_ADDRESS \
     $BASE_DIVISOR \
     $BYTES_THRESHOLD \
     $MULTIPLIER \
-    $MAX_POOL_NAME_LENGTH)
+    $MAX_GROUP_NAME_LENGTH)
 
-# Verify LOVE20PoolID
-verify_contract $poolIdAddress "LOVE20PoolID" "src/LOVE20PoolID.sol" $constructor_args
+# Verify LOVE20Group
+verify_contract $groupAddress "LOVE20Group" "src/LOVE20Group.sol" $constructor_args

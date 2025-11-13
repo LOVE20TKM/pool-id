@@ -25,12 +25,14 @@ deploy/
 在 `script/network/<网络名称>/` 目录下需要以下文件：
 
 #### `.account` (示例)
+
 ```bash
 KEYSTORE_ACCOUNT=myaccount
 ACCOUNT_ADDRESS=0x1234567890123456789012345678901234567890
 ```
 
 #### `network.params` (示例)
+
 ```bash
 # Network
 SECONDS_PER_BLOCK=3.2
@@ -42,7 +44,8 @@ VERIFIER=blockscout
 VERIFIER_URL=http://chain1.thinkiumscan.net/api/v2
 ```
 
-#### `poolid.params` (示例)
+#### `groupid.params` (示例)
+
 ```bash
 # PoolID Contract Configuration
 
@@ -57,9 +60,10 @@ MAX_POOL_NAME_LENGTH=64
 ```
 
 #### `address.poolid.params`
+
 ```bash
 # 部署后自动生成，初始为空
-poolIdAddress=
+groupIdAddress=
 ```
 
 ### 3. Keystore 账户
@@ -67,11 +71,13 @@ poolIdAddress=
 部署脚本使用 Foundry 的 keystore 功能进行账户管理。
 
 创建 keystore 账户：
+
 ```bash
 cast wallet import myaccount --interactive
 ```
 
 查看已有账户：
+
 ```bash
 cast wallet list
 ```
@@ -86,6 +92,7 @@ source one_click_deploy.sh <网络名称>
 ```
 
 例如：
+
 ```bash
 # 部署到 Thinkium 测试网
 source one_click_deploy.sh thinkium70001_public_test
@@ -98,6 +105,7 @@ source one_click_deploy.sh anvil
 ```
 
 一键部署会自动完成：
+
 1. 环境初始化和参数加载
 2. PoolID 合约部署
 3. 合约源码验证（仅 Thinkium 网络）
@@ -113,6 +121,7 @@ source 00_init.sh <网络名称>
 ```
 
 这将：
+
 - 加载网络配置
 - 加载账户信息
 - 设置 LOVE20 token 地址
@@ -126,6 +135,7 @@ forge_script_deploy_pool_id
 ```
 
 这将：
+
 - 部署 PoolID 合约
 - 自动保存合约地址到 `script/network/<网络名称>/address.poolid.params`
 - 显示部署摘要
@@ -145,6 +155,7 @@ source 99_check.sh
 ```
 
 这将验证：
+
 - PoolID 合约的 love20Token 地址是否正确
 - 合约名称和符号
 - 当前总供应量
@@ -154,12 +165,14 @@ source 99_check.sh
 ### 00_init.sh - 环境初始化
 
 **主要功能：**
+
 - 验证并加载网络配置
 - 导出环境变量（`network`, `LOVE20_TOKEN_ADDRESS` 等）
 - 请求 keystore 密码（仅一次）
 - 定义常用函数
 
 **导出的环境变量：**
+
 - `network` - 网络名称
 - `network_dir` - 网络配置目录路径
 - `LOVE20_TOKEN_ADDRESS` - LOVE20 token 地址
@@ -176,6 +189,7 @@ source 99_check.sh
 ### one_click_deploy.sh - 一键部署
 
 依次执行：
+
 1. 环境初始化（`00_init.sh`）
 2. 合约部署（`forge_script_deploy_pool_id`）
 3. 合约验证（`03_verify.sh`，仅 Thinkium 网络）
@@ -190,6 +204,7 @@ source 99_check.sh
 ### 99_check.sh - 部署检查
 
 验证合约部署的正确性：
+
 - 检查 love20Token 地址是否正确
 - 显示合约名称、符号和总供应量
 
@@ -205,21 +220,21 @@ source 00_init.sh <网络名称>
 source $network_dir/address.poolid.params
 
 # 使用便捷函数 cast_call（已在 00_init.sh 中定义）
-cast_call $poolIdAddress "name()(string)"
-cast_call $poolIdAddress "symbol()(string)"
-cast_call $poolIdAddress "totalSupply()(uint256)"
-cast_call $poolIdAddress "love20Token()(address)"
+cast_call $groupIdAddress "name()(string)"
+cast_call $groupIdAddress "symbol()(string)"
+cast_call $groupIdAddress "totalSupply()(uint256)"
+cast_call $groupIdAddress "love20Token()(address)"
 
 # 查询特定 token
-cast_call $poolIdAddress "ownerOf(uint256)(address)" 1
-cast_call $poolIdAddress "poolNameOf(uint256)(string)" 1
+cast_call $groupIdAddress "ownerOf(uint256)(address)" 1
+cast_call $groupIdAddress "poolNameOf(uint256)(string)" 1
 
-# 查询矿池名称
-cast_call $poolIdAddress "isPoolNameUsed(string)(bool)" "MyPool"
-cast_call $poolIdAddress "tokenIdOf(string)(uint256)" "MyPool"
+# 查询群名称
+cast_call $groupIdAddress "isPoolNameUsed(string)(bool)" "MyPool"
+cast_call $groupIdAddress "tokenIdOf(string)(uint256)" "MyPool"
 
 # 计算铸造成本
-cast_call $poolIdAddress "calculateMintCost(string)(uint256)" "MyPool"
+cast_call $groupIdAddress "calculateMintCost(string)(uint256)" "MyPool"
 ```
 
 ### 发送交易（写操作）
@@ -231,13 +246,13 @@ cast_call $poolIdAddress "calculateMintCost(string)(uint256)" "MyPool"
 POOL_NAME="YourPoolName"
 
 # 2. 计算铸造成本
-MINT_COST=$(cast_call $poolIdAddress "calculateMintCost(string)(uint256)" "$POOL_NAME")
+MINT_COST=$(cast_call $groupIdAddress "calculateMintCost(string)(uint256)" "$POOL_NAME")
 echo "需要 LOVE20: $MINT_COST wei"
 
 # 3. 批准 LOVE20 代币
 cast send $LOVE20_TOKEN_ADDRESS \
   "approve(address,uint256)" \
-  $poolIdAddress $MINT_COST \
+  $groupIdAddress $MINT_COST \
   --rpc-url $RPC_URL \
   --account $KEYSTORE_ACCOUNT \
   --password "$KEYSTORE_PASSWORD" \
@@ -245,7 +260,7 @@ cast send $LOVE20_TOKEN_ADDRESS \
   --legacy
 
 # 4. 铸造 Pool ID
-cast send $poolIdAddress \
+cast send $groupIdAddress \
   "mint(string)(uint256)" \
   "$POOL_NAME" \
   --rpc-url $RPC_URL \
@@ -268,16 +283,16 @@ cast send $poolIdAddress \
 
 ```bash
 # 查看自己拥有的 Pool ID 数量
-cast_call $poolIdAddress "balanceOf(address)(uint256)" $ACCOUNT_ADDRESS
+cast_call $groupIdAddress "balanceOf(address)(uint256)" $ACCOUNT_ADDRESS
 
 # 查看某个地址的第 N 个 token
-cast_call $poolIdAddress "tokenOfOwnerByIndex(address,uint256)(uint256)" $ACCOUNT_ADDRESS 0
+cast_call $groupIdAddress "tokenOfOwnerByIndex(address,uint256)(uint256)" $ACCOUNT_ADDRESS 0
 
 # 查看总共铸造了多少个 Pool ID
-cast_call $poolIdAddress "totalSupply()(uint256)"
+cast_call $groupIdAddress "totalSupply()(uint256)"
 
 # 查看第 N 个铸造的 token ID
-cast_call $poolIdAddress "tokenByIndex(uint256)(uint256)" 0
+cast_call $groupIdAddress "tokenByIndex(uint256)(uint256)" 0
 ```
 
 ## 常见问题
@@ -295,12 +310,14 @@ cast_call $poolIdAddress "tokenByIndex(uint256)(uint256)" 0
 ### Q2: 部署失败怎么办？
 
 检查以下几点：
+
 1. 网络配置文件是否正确
 2. Keystore 账户是否有足够的 gas
 3. LOVE20 token 地址是否正确
 4. RPC URL 是否可访问
 
 查看详细错误信息：
+
 ```bash
 # 在 forge_script 命令后添加 -vvvv 参数查看详细日志
 forge script script/DeployLOVE20PoolID.s.sol:DeployLOVE20PoolID --sig "run()" \
@@ -315,8 +332,9 @@ forge script script/DeployLOVE20PoolID.s.sol:DeployLOVE20PoolID --sig "run()" \
 如果需要重新部署（例如在测试网测试）：
 
 1. 清空 `address.poolid.params` 文件：
+
 ```bash
-echo "poolIdAddress=" > script/network/<网络名称>/address.poolid.params
+echo "groupIdAddress=" > script/network/<网络名称>/address.poolid.params
 ```
 
 2. 重新运行部署脚本
@@ -324,6 +342,7 @@ echo "poolIdAddress=" > script/network/<网络名称>/address.poolid.params
 ### Q4: 部署后如何验证合约工作正常？
 
 使用 `cast call` 查询合约：
+
 ```bash
 # 加载环境（如果还没加载）
 source 00_init.sh <网络名称>
@@ -332,13 +351,13 @@ source 00_init.sh <网络名称>
 source $network_dir/address.poolid.params
 
 # 查询合约基本信息
-cast_call $poolIdAddress "name()(string)"
-cast_call $poolIdAddress "symbol()(string)"
-cast_call $poolIdAddress "love20Token()(address)"
-cast_call $poolIdAddress "totalSupply()(uint256)"
+cast_call $groupIdAddress "name()(string)"
+cast_call $groupIdAddress "symbol()(string)"
+cast_call $groupIdAddress "love20Token()(address)"
+cast_call $groupIdAddress "totalSupply()(uint256)"
 
 # 计算铸造成本示例
-cast_call $poolIdAddress "calculateMintCost(string)(uint256)" "TestPool"
+cast_call $groupIdAddress "calculateMintCost(string)(uint256)" "TestPool"
 ```
 
 ### Q5: 如何在部署后更新参数文件？
@@ -351,8 +370,9 @@ vim script/network/<网络名称>/address.poolid.params
 ```
 
 或者使用命令：
+
 ```bash
-echo "poolIdAddress=0x新地址" > script/network/<网络名称>/address.poolid.params
+echo "groupIdAddress=0x新地址" > script/network/<网络名称>/address.poolid.params
 ```
 
 ## 安全建议
@@ -368,4 +388,3 @@ echo "poolIdAddress=0x新地址" > script/network/<网络名称>/address.poolid.
 - [Foundry Book](https://book.getfoundry.sh/)
 - [Cast 命令参考](https://book.getfoundry.sh/reference/cast/)
 - [Forge Script 文档](https://book.getfoundry.sh/tutorials/solidity-scripting)
-
