@@ -1,4 +1,4 @@
-# LOVE20 群（基于 ERC721 标准）
+# LOVE20 链群（基于 ERC721 标准）
 
 基于 LOVE20 core 协议的生态衍生协议
 
@@ -6,29 +6,29 @@
 
 ### 核心功能
 
-- 唯一性保证：每个群名称全局唯一，不可重复铸造
+- 唯一性保证：每个链群名称全局唯一，不可重复铸造
 - NFT 资产化：基于 ERC721 标准，支持自由转让和交易
 - 动态定价：铸造成本随 LOVE20 供应量动态调整
 - 名称激励：短名称需要更高成本，鼓励有意义的长名称
-- 完整枚举：支持 ERC721Enumerable 扩展，可遍历所有群
+- 完整枚举：支持 ERC721Enumerable 扩展，可遍历所有链群
 - 灵活配置：关键参数可在部署时配置，适应不同场景需求
 
 ## 应用场景
 
-- 群所有权管理：代表群的唯一身份和所有权凭证
-- 权益转让：通过 NFT 转让实现群经营权、收益权的流转
+- 链群所有权管理：代表链群的唯一身份和所有权凭证
+- 权益转让：通过 NFT 转让实现链群经营权、收益权的流转
 - 生态集成：为 LOVE20 生态中的群类协议提供统一的身份系统
-- 价值发现：稀缺和有意义的群名称可能具有市场价值
+- 价值发现：稀缺和有意义的链群名称可能具有市场价值
 
 ## 铸造
 
-任何人都可以支付一定数量的 LOVE20 代币，来铸造一个独一无二的群，并在任何支持此协议的群类扩展协议中，行使群主的权力
+任何人都可以支付一定数量的 LOVE20 代币，来铸造一个独一无二的链群，并在任何支持此协议的群类扩展协议中，行使群主的权力
 
-铸造时需提供一个未铸造过的群名称
+铸造时需提供一个未铸造过的链群名称
 
-### 群名称规则
+### 链群名称规则
 
-群名称需遵循以下验证规则：
+链群名称需遵循以下验证规则：
 
 - ✅ 长度限制：1-64 字节（UTF-8 编码）
 - ✅ 支持字符：字母、数字、特殊符号、空格（仅内部）、中文等 Unicode 字符
@@ -40,7 +40,7 @@
 
 安全特性：系统实现了完整的字符验证，有效防止控制字符注入、零宽字符混淆、视觉欺骗等攻击。
 
-详细规则请参考 [群名称校验规则](./docs/群名称校验规则.md)
+详细规则请参考 [链群名称校验规则](./docs/链群名称校验规则.md)
 
 ### 铸造费用
 
@@ -48,10 +48,10 @@
 
 铸造基础费用 = LOVE20 剩余未铸造量 / 10^8
 
-对于群名称字节数 >= 10 字节，只收取基础费用
-对于群名称字节数 < 10 字节的，每比 10 字节少 1 个字节，则所需代币数量 \* 10
+对于链群名称字节数 >= 10 字节，只收取基础费用
+对于链群名称字节数 < 10 字节的，每比 10 字节少 1 个字节，则所需代币数量 \* 10
 
-例如，当 LOVE20 剩余未铸造量为 80 亿时，不同群名称字节数对应的铸造费用如下：
+例如，当 LOVE20 剩余未铸造量为 80 亿时，不同链群名称字节数对应的铸造费用如下：
 
 | 字节数 | 铸造需 LOVE20 个数 |
 | ------ | ------------------ |
@@ -98,7 +98,7 @@ LOVE20_TOKEN_ADDRESS=0x...
 BASE_DIVISOR=100000000        # 基础除数（1e8），用于计算铸造成本
 BYTES_THRESHOLD=10            # 字节阈值，名称 >= 此长度只需基础费用
 MULTIPLIER=10                 # 倍数，每少于阈值 1 字节，成本乘以此值
-MAX_GROUP_NAME_LENGTH=64      # 群名称最大长度（字节）
+MAX_GROUP_NAME_LENGTH=64      # 链群名称最大长度（字节）
 ```
 
 **注意**：所有参数在合约部署时设置，部署后永久不可更改。
@@ -170,7 +170,7 @@ cast call $groupAddress "totalSupply()(uint256)" --rpc-url $RPC_URL
 cast call $groupAddress "ownerOf(uint256)(address)" 1 --rpc-url $RPC_URL
 cast call $groupAddress "groupNameOf(uint256)(string)" 1 --rpc-url $RPC_URL
 
-# 查询群名称是否已被使用
+# 查询链群名称是否已被使用
 cast call $groupAddress "isGroupNameUsed(string)(bool)" "MyGroup" --rpc-url $RPC_URL
 
 # 通过名称查询 token ID
@@ -182,13 +182,13 @@ cast call $groupAddress "calculateMintCost(string)(uint256)" "MyGroup" --rpc-url
 
 ### 铸造
 
-使用 `cast` 命令铸造群：
+使用 `cast` 命令铸造链群：
 
 ````bash
 # 设置变量
 groupAddress=0x...             # Group 合约地址
 LOVE20_TOKEN_ADDRESS=0x...     # LOVE20 token 地址
-GROUP_NAME="YourGroup"         # 群名称
+GROUP_NAME="YourGroup"         # 链群名称
 RPC_URL=https://proxy1.thinkiumrpc.net
 
 # 1. 计算铸造成本
@@ -204,7 +204,7 @@ cast send $LOVE20_TOKEN_ADDRESS \
   --gas-price 5000000000 \
   --legacy
 
-# 3. 铸造群
+# 3. 铸造链群
 cast send $groupAddress \
   "mint(string)(uint256)" \
   "$GROUP_NAME" \

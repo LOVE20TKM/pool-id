@@ -229,7 +229,7 @@ cast_call $groupIdAddress "love20Token()(address)"
 cast_call $groupIdAddress "ownerOf(uint256)(address)" 1
 cast_call $groupIdAddress "poolNameOf(uint256)(string)" 1
 
-# 查询群名称
+# 查询链群名称
 cast_call $groupIdAddress "isPoolNameUsed(string)(bool)" "MyPool"
 cast_call $groupIdAddress "tokenIdOf(string)(uint256)" "MyPool"
 

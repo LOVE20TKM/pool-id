@@ -1,6 +1,6 @@
 # GitHub Pages Configuration
 title: "LOVE20 Group"
-description: "LOVE20群是基于ERC721标准的NFT资产，每个群都是独一无二的，具有唯一性和稀缺性。每个群都有自己的名称和ID，并且可以自由转让和交易。"
+description: "LOVE20链群是基于ERC721标准的NFT资产，每个链群都是独一无二的，具有唯一性和稀缺性。每个链群都有自己的名称和ID，并且可以自由转让和交易。"
 theme: jekyll-theme-hacker
 lang: zh-CN
 # GitHub Pages will automatically render README.md as the home page
